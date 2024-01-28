@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mysql-connector-python = "*"
+pandas = "*"
+fastapi = "*"
+uvicorn = "*"
+python-jose = "*"
+requests = "*"
+sqlalchemy = "1.4.51"
+databases = "*"
+aiomysql = "*"
+python-multipart = "*"
+python-dotenv = "*"
+
+[dev-packages]
+black = "*"
+pytest = "*"
+responses = "*"
+
+[requires]
+python_version = "3.8"

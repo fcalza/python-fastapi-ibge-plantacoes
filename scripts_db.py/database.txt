@@ -1,0 +1,88 @@
+CREATE TABLE municipios (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	uf VARCHAR(2),
+	uf_id_ibge INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+insert into municipios value (1100015,"Alta Floresta D'Oeste", "RO", 11);
+
+select * from municipios;
+
+
+
+CREATE TABLE producao_municipios (
+	pm_municipio_id INT NOT NULL,
+	pm_ano SMALLINT,
+    pm_area INT,
+	pm_quantidade INT,
+    PRIMARY KEY (pm_municipio_id, pm_ano)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+insert into municipios value (1100015,"Alta Floresta D'Oeste", "RO", 11);
+
+select * from municipios;
+
+
+CREATE VIEW view_produtividade_estados AS
+SELECT
+    m.uf AS estado,
+    p.pm_ano,
+    SUM(p.pm_area) AS total_area,
+    SUM(p.pm_quantidade) AS total_quantidade,
+    SUM(p.pm_quantidade) / SUM(p.pm_area) AS produtividade
+FROM
+    producao_municipios p
+JOIN
+    municipios m ON p.pm_municipio_id = m.id
+GROUP BY
+    m.uf, p.pm_ano;
+
+
+[
+   {
+      "NC":"Nível Territorial (Código)",
+      "NN":"Nível Territorial",
+      "MC":"Unidade de Medida (Código)",
+      "MN":"Unidade de Medida",
+      "V":"Valor",
+      "D1C":"Município (Código)",
+      "D1N":"Município",
+      "D2C":"Variável (Código)",
+      "D2N":"Variável",
+      "D3C":"Ano (Código)",
+      "D3N":"Ano",
+      "D4C":"Produto das lavouras temporárias e permanentes (Código)",
+      "D4N":"Produto das lavouras temporárias e permanentes"
+   },
+   {
+      "NC":"6",
+      "NN":"Município",
+      "MC":"1006",
+      "MN":"Hectares",
+      "V":"450",
+      "D1C":"1100015",
+      "D1N":"Alta Floresta D'Oeste - RO",
+      "D2C":"216",
+      "D2N":"Área colhida",
+      "D3C":"2019",
+      "D3N":"2019",
+      "D4C":"40124",
+      "D4N":"Soja (em grão)"
+   },
+   {
+      "NC":"6",
+      "NN":"Município",
+      "MC":"1006",
+      "MN":"Hectares",
+      "V":"7893",
+      "D1C":"1100023",
+      "D1N":"Ariquemes - RO",
+      "D2C":"216",
+      "D2N":"Área colhida",
+      "D3C":"2019",
+      "D3N":"2019",
+      "D4C":"40124",
+      "D4N":"Soja (em grão)"
+   }
+]
