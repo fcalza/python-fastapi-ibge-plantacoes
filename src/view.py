@@ -56,27 +56,25 @@ def insert_or_update(year, df_atualizado, db: Session) -> None:
 
 def processar_dados_retorno_plantacoes(ano: int) -> pd.DataFrame:
     print("consultando ano: ", ano)
-    pd1 = pd.DataFrame(consulta_area_colhida(ano))
+    df_area_colhida = pd.DataFrame(consulta_area_colhida(ano))
     print(f"{ano} - area_colhida")
-    pd2 = pd.DataFrame(consulta_quantidade_produzida(ano))
+    df_quantidade_produzida = pd.DataFrame(consulta_quantidade_produzida(ano))
     print(f"{ano} - quantidade_produzida")
 
-    pd1 = pd1.drop(0)
-    pd1["V"] = pd.to_numeric(pd1["V"], errors="coerce").fillna(0).astype(int)
-    pd1["D1C"] = pd.to_numeric(pd1["D1C"], errors="coerce").fillna(0).astype(int)
-    pd1_novo = pd1.loc[:, ["D1C", "V", "D3C"]].rename(
+    df_area_colhida = df_area_colhida.drop(0)
+    df_area_colhida["V"] = pd.to_numeric(df_area_colhida["V"], errors="coerce").fillna(0).astype(int)
+    df_area_colhida["D1C"] = pd.to_numeric(df_area_colhida["D1C"], errors="coerce").fillna(0).astype(int)
+    df_ac = df_area_colhida.loc[:, ["D1C", "V", "D3C"]].rename(
         columns={"V": "pm_area", "D1C": "pm_municipio_id", "D3C": "pm_ano"}
     )
 
-    pd2 = pd2.drop(0)
-    pd2["V"] = pd.to_numeric(pd2["V"], errors="coerce").fillna(0).astype(int)
-    pd2["D1C"] = pd.to_numeric(pd2["D1C"], errors="coerce").fillna(0).astype(int)
-    pd2_novo = pd2.loc[:, ["D1C", "V"]].rename(
+    df_quantidade_produzida = df_quantidade_produzida.drop(0)
+    df_quantidade_produzida["V"] = pd.to_numeric(df_quantidade_produzida["V"], errors="coerce").fillna(0).astype(int)
+    df_quantidade_produzida["D1C"] = pd.to_numeric(df_quantidade_produzida["D1C"], errors="coerce").fillna(0).astype(int)
+    df_qp = df_quantidade_produzida.loc[:, ["D1C", "V"]].rename(
         columns={"V": "pm_quantidade", "D1C": "pm_municipio_id"}
     )
-    pd_novo = pd1_novo.merge(pd2_novo, on="pm_municipio_id", how="inner")
-
-    return pd_novo
+    return df_ac.merge(df_qp, on="pm_municipio_id", how="inner")
 
 
 # @todo metodo asyncio
@@ -84,11 +82,11 @@ def processar_dados_plantacoes(db: Session) -> None:
     processados = []
     nao_processados = []
     for ano in range(2018, datetime.now().year):
-        pd_novo = processar_dados_retorno_plantacoes(ano)
-        if pd_novo.size <= 0:
+        df_para_atualizar = processar_dados_retorno_plantacoes(ano)
+        if df_para_atualizar.size <= 0:
             nao_processados.append(ano)
             continue
-        insert_or_update(ano, pd_novo, db)
+        insert_or_update(ano, df_para_atualizar, db)
         processados.append(ano)
 
     if nao_processados:
@@ -101,9 +99,9 @@ def processar_dados_plantacoes(db: Session) -> None:
 
 
 def processar_dados_plantacoes_por_ano(ano, db: Session) -> None:
-    pd_novo = processar_dados_retorno_plantacoes(ano)
-    if pd_novo.size > 0:
-        insert_or_update(ano, pd_novo, db)
+    df_para_atualizar = processar_dados_retorno_plantacoes(ano)
+    if df_para_atualizar.size > 0:
+        insert_or_update(ano, df_para_atualizar, db)
     raise ProcessamentoException(
         f"Não há dados suficientes para processar o ano de {ano}"
     )
@@ -115,7 +113,7 @@ def get_municipio(municipio_id: int, db: Session) -> ListProducaoMunicipios:
         .filter(ProducaoMunicipios.pm_municipio_id == municipio_id)
         .all()
     )
-    retorno = ListProducaoMunicipios(
+    return ListProducaoMunicipios(
         dados=[
             {
                 "municipio_id": municipio.pm_municipio_id,
@@ -126,7 +124,6 @@ def get_municipio(municipio_id: int, db: Session) -> ListProducaoMunicipios:
             for municipio in municipios
         ]
     )
-    return retorno
 
 
 def get_municipio_por_ano(
@@ -158,19 +155,14 @@ def object_as_dict(obj):
 
 def get_produtividade_estados_por_ano(
     dados: ProdutividadeAnoEstados, db: Session
-) -> List:
+) -> List[ProdutividadePorEstado]:
     produtividade_estados = (
         db.query(ViewProdutividadeEstados)
         .filter(ViewProdutividadeEstados.estado.in_(dados.estados))
         .filter(ViewProdutividadeEstados.pm_ano == dados.ano)
         .all()
     )
-    # list = [
-    #     object_as_dict(produtividade_estado)
-    #     for produtividade_estado in produtividade_estados
-    # ]
-
-    produtividade_estados = [
+    return [
         ProdutividadePorEstado(
             estado=produtividade_estado.estado,
             produtividade=(
@@ -181,7 +173,6 @@ def get_produtividade_estados_por_ano(
         )
         for produtividade_estado in produtividade_estados
     ]
-    return produtividade_estados
 
 
 def get_municipios_quantidade_produzida(
