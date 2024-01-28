@@ -13,6 +13,10 @@ SECRET_KEY
 ## Rodar o projeto
 ./run.sh
 
+## Autenticação
+Para gerar o token: 
+usuário "username"
+senha "password"
 
 ## para rodar os testes
 pytest
