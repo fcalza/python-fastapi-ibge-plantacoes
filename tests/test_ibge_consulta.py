@@ -22,11 +22,11 @@ def test_payload_retorno_consulta_area_colhida():
         )
         consulta = consulta_area_colhida(2018)
 
-    assert consulta[0]['V'] == 'Valor'
-    assert consulta[0]['D1C'] == 'Município (Código)'
-    assert consulta[1]['V'] == '450'
-    assert consulta[1]['D1C'] == '1100015'
-    assert consulta[1]['D2N'] == 'Área colhida'
+    assert consulta[0]["V"] == "Valor"
+    assert consulta[0]["D1C"] == "Município (Código)"
+    assert consulta[1]["V"] == "450"
+    assert consulta[1]["D1C"] == "1100015"
+    assert consulta[1]["D2N"] == "Área colhida"
 
 
 def test_payload_retorno_consulta_quantidade_produzida():
@@ -43,8 +43,8 @@ def test_payload_retorno_consulta_quantidade_produzida():
 
     RetornoConsultaPlantacoes(retorno_json)
 
-    assert consulta[0]['V'] == 'Valor'
-    assert consulta[0]['D1C'] == 'Município (Código)'
-    assert consulta[1]['V'] == '1350'
-    assert consulta[1]['D1C'] == '1100015'
-    assert consulta[1]['D2N'] == 'Quantidade produzida'
+    assert consulta[0]["V"] == "Valor"
+    assert consulta[0]["D1C"] == "Município (Código)"
+    assert consulta[1]["V"] == "1350"
+    assert consulta[1]["D1C"] == "1100015"
+    assert consulta[1]["D2N"] == "Quantidade produzida"

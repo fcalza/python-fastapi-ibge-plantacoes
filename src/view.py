@@ -62,15 +62,27 @@ def processar_dados_retorno_plantacoes(ano: int) -> pd.DataFrame:
     print(f"{ano} - quantidade_produzida")
 
     df_area_colhida = df_area_colhida.drop(0)
-    df_area_colhida["V"] = pd.to_numeric(df_area_colhida["V"], errors="coerce").fillna(0).astype(int)
-    df_area_colhida["D1C"] = pd.to_numeric(df_area_colhida["D1C"], errors="coerce").fillna(0).astype(int)
+    df_area_colhida["V"] = (
+        pd.to_numeric(df_area_colhida["V"], errors="coerce").fillna(0).astype(int)
+    )
+    df_area_colhida["D1C"] = (
+        pd.to_numeric(df_area_colhida["D1C"], errors="coerce").fillna(0).astype(int)
+    )
     df_ac = df_area_colhida.loc[:, ["D1C", "V", "D3C"]].rename(
         columns={"V": "pm_area", "D1C": "pm_municipio_id", "D3C": "pm_ano"}
     )
 
     df_quantidade_produzida = df_quantidade_produzida.drop(0)
-    df_quantidade_produzida["V"] = pd.to_numeric(df_quantidade_produzida["V"], errors="coerce").fillna(0).astype(int)
-    df_quantidade_produzida["D1C"] = pd.to_numeric(df_quantidade_produzida["D1C"], errors="coerce").fillna(0).astype(int)
+    df_quantidade_produzida["V"] = (
+        pd.to_numeric(df_quantidade_produzida["V"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+    )
+    df_quantidade_produzida["D1C"] = (
+        pd.to_numeric(df_quantidade_produzida["D1C"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+    )
     df_qp = df_quantidade_produzida.loc[:, ["D1C", "V"]].rename(
         columns={"V": "pm_quantidade", "D1C": "pm_municipio_id"}
     )

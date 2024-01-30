@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 
 load_dotenv()
-
 import logging
+
 
 from typing import List
 from fastapi import FastAPI, Depends, HTTPException, Path, Query
