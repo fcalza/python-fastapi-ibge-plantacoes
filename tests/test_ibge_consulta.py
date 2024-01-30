@@ -1,7 +1,5 @@
 import json
-
 import responses
-import pytest
 
 from fastapi.encoders import jsonable_encoder
 
