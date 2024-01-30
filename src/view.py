@@ -102,6 +102,7 @@ def processar_dados_plantacoes_por_ano(ano, db: Session) -> None:
     df_para_atualizar = processar_dados_retorno_plantacoes(ano)
     if df_para_atualizar.size > 0:
         insert_or_update(ano, df_para_atualizar, db)
+        return
     raise ProcessamentoException(
         f"Não há dados suficientes para processar o ano de {ano}"
     )
